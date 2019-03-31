@@ -1,4 +1,4 @@
-package com.mercadolibre.mutantfinder.excepction;
+package com.proyect.advertisingManager.excepction;
 
 /**
  * Excepcion para manejar cadenas de ADN no validas

@@ -1,4 +1,4 @@
-package com.mercadolibre.mutantfinder.entity;
+package com.proyect.advertisingManager.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

@@ -1,4 +1,4 @@
-package com.mercadolibre.mutantfinder.service.impl;
+package com.proyect.advertisingManager.service.impl;
 
 import java.util.Arrays;
 
@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.mercadolibre.mutantfinder.excepction.NotValidDNASequenceException;
-import com.mercadolibre.mutantfinder.service.IMutantFinderService;
+import com.proyect.advertisingManager.excepction.NotValidDNASequenceException;
+import com.proyect.advertisingManager.service.IAdvertisingManagerService;
 
 /**
  * Servicio general que tiene todo el manejo de chequeo de ADN mutante o humano
@@ -16,9 +16,9 @@ import com.mercadolibre.mutantfinder.service.IMutantFinderService;
  *
  */
 @Service
-public class MutantFinderService implements IMutantFinderService {
+public class AdvertisingManagerService implements IAdvertisingManagerService {
 
-	private static final Logger logger = LoggerFactory.getLogger(MutantFinderService.class);
+	private static final Logger logger = LoggerFactory.getLogger(AdvertisingManagerService.class);
 
 	public String[][] matriz;
 	public int filas = 0;

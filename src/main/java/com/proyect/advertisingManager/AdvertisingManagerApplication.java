@@ -1,4 +1,4 @@
-package com.mercadolibre.mutantfinder;
+package com.proyect.advertisingManager;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,8 +14,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @SpringBootApplication
 @ComponentScan("com.mercadolibre.mutantfinder") // to scan packages mentioned
 @EnableMongoRepositories(basePackages = "com.mercadolibre.mutantfinder")
-public class MutantFinderApplication {
+public class AdvertisingManagerApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(MutantFinderApplication.class, args);
+		SpringApplication.run(AdvertisingManagerApplication.class, args);
 	}
 }

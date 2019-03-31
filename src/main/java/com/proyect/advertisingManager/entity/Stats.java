@@ -1,4 +1,4 @@
-package com.mercadolibre.mutantfinder.entity;
+package com.proyect.advertisingManager.entity;
 
 /**
  * Clase para la representacion de datos estadisticos

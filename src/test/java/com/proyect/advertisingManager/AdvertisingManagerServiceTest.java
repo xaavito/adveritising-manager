@@ -1,4 +1,4 @@
-package com.mercadolibre.mutantfinder;
+package com.proyect.advertisingManager;
 
 import org.junit.After;
 import org.junit.Test;
@@ -12,16 +12,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import com.mercadolibre.mutantfinder.dao.AdnRepository;
-import com.mercadolibre.mutantfinder.entity.Adn;
-import com.mercadolibre.mutantfinder.entity.Stats;
+import com.proyect.advertisingManager.dao.AdnRepository;
+import com.proyect.advertisingManager.entity.Adn;
+import com.proyect.advertisingManager.entity.Stats;
 
 import reactor.core.publisher.Mono;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
-public class MutantFinderServiceTest {
+public class AdvertisingManagerServiceTest {
 	
 	@Autowired
 	private AdnRepository repositoryAdn;

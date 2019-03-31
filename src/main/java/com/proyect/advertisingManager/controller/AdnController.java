@@ -1,4 +1,4 @@
-package com.mercadolibre.mutantfinder.controller;
+package com.proyect.advertisingManager.controller;
 
 import java.util.List;
 
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mercadolibre.mutantfinder.dao.AdnRepository;
-import com.mercadolibre.mutantfinder.entity.Adn;
-import com.mercadolibre.mutantfinder.entity.Stats;
-import com.mercadolibre.mutantfinder.excepction.NotValidDNASequenceException;
-import com.mercadolibre.mutantfinder.service.IMutantFinderService;
+import com.proyect.advertisingManager.dao.AdnRepository;
+import com.proyect.advertisingManager.entity.Adn;
+import com.proyect.advertisingManager.entity.Stats;
+import com.proyect.advertisingManager.excepction.NotValidDNASequenceException;
+import com.proyect.advertisingManager.service.IAdvertisingManagerService;
 
 /**
  * 1 de los 2 controllers de entradas. Solo para el chequeo de si es mutante o
@@ -31,7 +31,7 @@ public class AdnController {
 	private static final Logger logger = LoggerFactory.getLogger(AdnController.class);
 
 	@Autowired
-	private IMutantFinderService service;
+	private IAdvertisingManagerService service;
 
 	private final AdnRepository repository;
 
