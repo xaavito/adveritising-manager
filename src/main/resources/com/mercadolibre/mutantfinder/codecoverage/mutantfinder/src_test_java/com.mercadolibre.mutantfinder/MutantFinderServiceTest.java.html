@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>MutantFinderServiceTest.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">MutantFinderServiceTest (09/12/2018 17:10:26)</a> &gt; <a href="../../index.html" class="el_group">mutantfinder</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">com.mercadolibre.mutantfinder</a> &gt; <span class="el_source">MutantFinderServiceTest.java</span></div><h1>MutantFinderServiceTest.java</h1><pre class="source lang-java linenums">package com.mercadolibre.mutantfinder;
+
+import org.junit.After;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.reactive.server.WebTestClient;
+
+import com.mercadolibre.mutantfinder.dao.AdnRepository;
+import com.mercadolibre.mutantfinder.dao.StatsRepository;
+import com.mercadolibre.mutantfinder.entity.Adn;
+import com.mercadolibre.mutantfinder.entity.Stats;
+
+import reactor.core.publisher.Mono;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient
+<span class="fc" id="L25">public class MutantFinderServiceTest {</span>
+	
+	@Autowired
+	private StatsRepository repositoryStats;
+	@Autowired
+	private AdnRepository repositoryAdn;
+	
+	@Autowired
+	private WebTestClient webClient;
+
+	@After
+	public void limpieza() throws Exception {
+<span class="fc" id="L37">		repositoryAdn.deleteAll();</span>
+<span class="fc" id="L38">		repositoryStats.deleteAll();</span>
+<span class="fc" id="L39">	}</span>
+	
+	@Test
+	public void estadisticasSinNAda() {
+<span class="fc" id="L43">		this.webClient.get().uri(&quot;/stats&quot;).exchange().expectBody().json(&quot;{\&quot;ratio\&quot;:\&quot;0\&quot;}&quot;);</span>
+<span class="fc" id="L44">	}</span>
+
+	@Test
+	public void sendingMutantDNA() {
+<span class="fc" id="L48">		String[] cadena = { &quot;ATGCGA&quot;, &quot;CCGTGC&quot;, &quot;TTATGT&quot;, &quot;AGAAGG&quot;, &quot;CCTCTA&quot;, &quot;TCACTG&quot; };</span>
+<span class="fc" id="L49">		Adn adnToSend = new Adn(cadena);</span>
+
+<span class="fc" id="L51">		this.webClient.post().uri(&quot;/mutant&quot;).contentType(MediaType.APPLICATION_JSON_UTF8)</span>
+<span class="fc" id="L52">				.accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(adnToSend), Adn.class).exchange().expectStatus()</span>
+<span class="fc" id="L53">				.isOk();</span>
+<span class="fc" id="L54">	}</span>
+
+	@Test
+	public void sendingHumantDNA() {
+<span class="fc" id="L58">		String[] cadena = { &quot;ATGCCA&quot;, &quot;CCGTGC&quot;, &quot;TTATGT&quot;, &quot;AGAAGG&quot;, &quot;CCTCTA&quot;, &quot;TCACTG&quot; };</span>
+<span class="fc" id="L59">		Adn adnToSend = new Adn(cadena);</span>
+
+<span class="fc" id="L61">		this.webClient.post().uri(&quot;/mutant&quot;).contentType(MediaType.APPLICATION_JSON_UTF8)</span>
+<span class="fc" id="L62">				.accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(adnToSend), Adn.class).exchange().expectStatus()</span>
+<span class="fc" id="L63">				.isForbidden();</span>
+<span class="fc" id="L64">	}</span>
+
+	@Test
+	public void sendingWrongDNA() {
+<span class="fc" id="L68">		String[] cadena = { &quot;ATXCCA&quot;, &quot;CCGTGC&quot;, &quot;TTMTGT&quot;, &quot;AGAAGG&quot;, &quot;CCTCTA&quot;, &quot;TCACTG&quot; };</span>
+<span class="fc" id="L69">		Adn adnToSend = new Adn(cadena);</span>
+
+<span class="fc" id="L71">		this.webClient.post().uri(&quot;/mutant&quot;).contentType(MediaType.APPLICATION_JSON_UTF8)</span>
+<span class="fc" id="L72">				.accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(adnToSend), Adn.class).exchange().expectStatus()</span>
+<span class="fc" id="L73">				.isForbidden();</span>
+<span class="fc" id="L74">	}</span>
+
+	@Test
+	public void ratioCalculator() {
+		// HUMANO 1
+<span class="fc" id="L79">		String[] cadena = { &quot;ATGCCA&quot;, &quot;CCGTGC&quot;, &quot;TTATGT&quot;, &quot;AGAAGG&quot;, &quot;CCTCTA&quot;, &quot;TCACTG&quot; };</span>
+<span class="fc" id="L80">		Adn adnToSend = new Adn(cadena);</span>
+
+<span class="fc" id="L82">		this.webClient.post().uri(&quot;/mutant&quot;).contentType(MediaType.APPLICATION_JSON_UTF8)</span>
+<span class="fc" id="L83">				.accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(adnToSend), Adn.class).exchange().expectStatus()</span>
+<span class="fc" id="L84">				.isForbidden();</span>
+		// HUMANO 2
+<span class="fc" id="L86">		String[] cadena2 = { &quot;ATGCCA&quot;, &quot;CCGTGC&quot;, &quot;TTATGT&quot;, &quot;AGAAGG&quot;, &quot;CCTCTA&quot;, &quot;TCACTG&quot; };</span>
+<span class="fc" id="L87">		adnToSend = new Adn(cadena2);</span>
+
+<span class="fc" id="L89">		this.webClient.post().uri(&quot;/mutant&quot;).contentType(MediaType.APPLICATION_JSON_UTF8)</span>
+<span class="fc" id="L90">				.accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(adnToSend), Adn.class).exchange().expectStatus()</span>
+<span class="fc" id="L91">				.isForbidden();</span>
+		// MUTANTE 1
+<span class="fc" id="L93">		String[] cadena3 = { &quot;ATGCGA&quot;, &quot;CCGTGC&quot;, &quot;TTATGT&quot;, &quot;AGAAGG&quot;, &quot;CCTCTA&quot;, &quot;TCACTG&quot; };</span>
+<span class="fc" id="L94">		adnToSend = new Adn(cadena3);</span>
+
+<span class="fc" id="L96">		this.webClient.post().uri(&quot;/mutant&quot;).contentType(MediaType.APPLICATION_JSON_UTF8)</span>
+<span class="fc" id="L97">				.accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(adnToSend), Adn.class).exchange().expectStatus()</span>
+<span class="fc" id="L98">				.isOk();</span>
+		//RATIO
+<span class="fc" id="L100">		this.webClient.get().uri(&quot;/stats&quot;).exchange().expectBody().json(&quot;{\&quot;ratio\&quot;:\&quot;0.5\&quot;}&quot;);</span>
+<span class="fc" id="L101">	}</span>
+	
+	@Test
+	public void sendingSomethingElseTuMutantService() {
+<span class="fc" id="L105">		Stats stat = new Stats();</span>
+
+<span class="fc" id="L107">		this.webClient.post().uri(&quot;/mutant&quot;).contentType(MediaType.APPLICATION_JSON_UTF8)</span>
+<span class="fc" id="L108">				.accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(stat), Stats.class).exchange().expectStatus()</span>
+<span class="fc" id="L109">				.isForbidden();</span>
+<span class="fc" id="L110">	}</span>
+	
+	@Test
+	public void serviceMutantWithGet() {
+<span class="fc" id="L114">		this.webClient.get().uri(&quot;/mutant&quot;).exchange().expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);</span>
+<span class="fc" id="L115">	}</span>
+	
+	@Test
+	public void statServiceWithPost() {
+<span class="fc" id="L119">		this.webClient.post().uri(&quot;/stat&quot;).exchange().expectStatus().isEqualTo(HttpStatus.NOT_FOUND);</span>
+<span class="fc" id="L120">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span>MutantFinderServiceTest (09/12/2018 17:10:26)</div></body></html>

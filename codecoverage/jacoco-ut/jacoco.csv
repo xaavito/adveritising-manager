@@ -1,0 +1,7 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Mutant Finder,com.mercadolibre.mutantfinder.excepction,NotValidDNASequenceException,0,4,0,0,0,2,0,1,0,1
+Mutant Finder,com.mercadolibre.mutantfinder.controller,AdnController,7,122,0,6,2,27,1,7,1,4
+Mutant Finder,com.mercadolibre.mutantfinder.service.impl,MutantFinderService,103,711,16,66,9,88,16,42,0,17
+Mutant Finder,com.mercadolibre.mutantfinder,MutantFinderApplication,5,3,0,0,2,1,1,1,1,1
+Mutant Finder,com.mercadolibre.mutantfinder.entity,Stats,12,24,0,0,6,10,3,5,3,5
+Mutant Finder,com.mercadolibre.mutantfinder.entity,Adn,114,41,18,0,0,15,13,8,4,8
