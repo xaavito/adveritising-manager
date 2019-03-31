@@ -13,7 +13,6 @@ import lombok.Data;
  */
 @Document(collection = "adn")
 @Data
-//@NoArgsConstructor
 public class Adn {
 	private @Id String id;
 	private String[] dna = new String[6];
