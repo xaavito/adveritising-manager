@@ -12,8 +12,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
  *
  */
 @SpringBootApplication
-@ComponentScan("com.mercadolibre.mutantfinder") // to scan packages mentioned
-@EnableMongoRepositories(basePackages = "com.mercadolibre.mutantfinder")
+@ComponentScan("com.proyect.advertisingManager") // to scan packages mentioned
+@EnableMongoRepositories(basePackages = "com.proyect.advertisingManager")
 public class AdvertisingManagerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AdvertisingManagerApplication.class, args);
