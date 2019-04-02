@@ -7,14 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.proyect.advertisingManager.dao.AdManagerRepository;
-import com.proyect.advertisingManager.entity.Adn;
-import com.proyect.advertisingManager.entity.Stats;
+import com.proyect.advertisingManager.entity.Anuncio;
 
 import reactor.core.publisher.Mono;
 
@@ -24,22 +22,20 @@ import reactor.core.publisher.Mono;
 public class AdvertisingManagerServiceTest {
 	
 	@Autowired
-	private AdManagerRepository repositoryAdn;
+	private AdManagerRepository repository;
 	
 	@Autowired
 	private WebTestClient webClient;
 
 	@After
 	public void limpieza() throws Exception {
-		repositoryAdn.deleteAll();
+		repository.deleteAll();
 	}
-	
-	@Test
+	/*
 	public void estadisticasSinNAda() {
 		this.webClient.get().uri("/stats").exchange().expectBody().json("{\"ratio\":\"0.0\"}");
 	}
 
-	@Test
 	public void sendingMutantDNA() {
 		String[] cadena = { "ATGCGA", "CCGTGC", "TTATGT", "AGAAGG", "CCTCTA", "TCACTG" };
 		Adn adnToSend = new Adn(cadena);
@@ -49,7 +45,6 @@ public class AdvertisingManagerServiceTest {
 				.isOk();
 	}
 
-	@Test
 	public void sendingHumantDNA() {
 		String[] cadena = { "ATGCCA", "CCGTGC", "TTATGT", "AGAAGG", "CCTCTA", "TCACTG" };
 		Adn adnToSend = new Adn(cadena);
@@ -59,7 +54,6 @@ public class AdvertisingManagerServiceTest {
 				.isForbidden();
 	}
 
-	@Test
 	public void sendingWrongDNA() {
 		String[] cadena = { "ATXCCA", "CCGTGC", "TTMTGT", "AGAAGG", "CCTCTA", "TCACTG" };
 		Adn adnToSend = new Adn(cadena);
@@ -69,7 +63,7 @@ public class AdvertisingManagerServiceTest {
 				.isForbidden();
 	}
 
-	@Test
+
 	public void ratioCalculator() {
 		// HUMANO 1
 		String[] cadena = { "ATGCCA", "CCGTGC", "TTATGT", "AGAAGG", "CCTCTA", "TCACTG" };
@@ -96,7 +90,6 @@ public class AdvertisingManagerServiceTest {
 		this.webClient.get().uri("/stats").exchange().expectBody().json("{\"ratio\":\"0.5\"}");
 	}
 	
-	@Test
 	public void sendingSomethingElseTuMutantService() {
 		Stats stat = new Stats();
 
@@ -105,14 +98,23 @@ public class AdvertisingManagerServiceTest {
 				.isForbidden();
 	}
 	
-	@Test
 	public void serviceMutantWithGet() {
 		this.webClient.get().uri("/mutant").exchange().expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
 	}
 	
-	@Test
 	public void statServiceWithPost() {
 		this.webClient.post().uri("/stats").exchange().expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
 	}
+	*/
+	@Test
+	public void addAnuncio() {
+		// ANUNCIO 1
+		Anuncio anuncio = new Anuncio("Nada", "Nada", 0.1,2.5,"23/06/2019", "Argentina", 15,"F");
 
+		this.webClient.post().uri("/add-anuncio").contentType(MediaType.APPLICATION_JSON_UTF8)
+				.accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(anuncio), Anuncio.class).exchange().expectStatus()
+				.isOk();
+				//RATIO
+		//this.webClient.get().uri("/all").exchange().expectBody().json("{\"ratio\":\"0.5\"}");
+	}
 }

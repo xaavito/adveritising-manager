@@ -3,7 +3,6 @@ package com.proyect.advertisingManager.service.impl;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.proyect.advertisingManager.entity.Anuncio;
-import com.proyect.advertisingManager.excepction.NotValidDNASequenceException;
 import com.proyect.advertisingManager.service.IAdvertisingManagerService;
 
 /**
@@ -30,6 +28,7 @@ public class AdvertisingManagerService implements IAdvertisingManagerService {
 	 */
 	@Override
 	public List<Anuncio> getRandomAnuncios(List<Anuncio> anunciosFromDB) {
+		logger.info("getRandomAnuncios...");
 		List<Anuncio> resultingAnuncios = new ArrayList<Anuncio>();
 		// Compute the total weight of all items together
 		double totalWeight = 0.0d;
@@ -86,6 +85,7 @@ public class AdvertisingManagerService implements IAdvertisingManagerService {
 	 * @return
 	 */
 	private Anuncio getRandomAnuncio(double totalWeight, List<Anuncio> anunciosFromDB) {
+		logger.info("getRandomAnuncio...");
 		double random = Math.random() * totalWeight;
 		for (Anuncio anuncio : anunciosFromDB) {
 			random -= anuncio.getCostoImpresion();

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proyect.advertisingManager.dao.AdManagerRepository;
+import com.proyect.advertisingManager.dao.UsuarioRepository;
 import com.proyect.advertisingManager.entity.Anuncio;
 import com.proyect.advertisingManager.entity.Usuario;
 import com.proyect.advertisingManager.service.IAdvertisingManagerService;
@@ -35,9 +36,11 @@ public class AdManagerController {
 	private IAdvertisingManagerService service;
 
 	private final AdManagerRepository repository;
+	private final UsuarioRepository userRepository;
 
-	AdManagerController(AdManagerRepository repository) {
+	AdManagerController(AdManagerRepository repository, UsuarioRepository userRepository) {
 		this.repository = repository;
+		this.userRepository = userRepository;
 	}
 
 	/**
@@ -81,7 +84,7 @@ public class AdManagerController {
 		List<Anuncio> anunciosFromDB = null;
 		List<Anuncio> randomAnuncios = null;
 		try {
-			Usuario user = repository.findUsuarioById(id);
+			Usuario user = userRepository.findById(id);
 
 			// Si hay usuario segmentamos, sino, nada.
 			if (user != null) {

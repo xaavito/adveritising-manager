@@ -1,5 +1,7 @@
 package com.proyect.advertisingManager.entity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
@@ -31,6 +33,24 @@ public class Anuncio {
 	// for deserialisation
 	public Anuncio() {
 	}
+	
+	public Anuncio(String titulo, String desc, Double costoImpr, Double costoTotal, String fechaFin, String pais, int edad, String genero) {
+		this.costoImpresion = costoImpr;
+		this.costoTotalMaximo = costoTotal;
+		
+		try {
+			this.fechaFinalizacion = new SimpleDateFormat("dd/MM/yyyy").parse(fechaFin);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			this.fechaFinalizacion = new Date();
+		}
+		this.titulo = titulo;
+		this.descripcion = desc;
+		this.pais = pais;
+		this.edad = edad;
+		this.genero = genero;
+		this.numeroImpresiones = 0;
+	}	
 
 	public String getId() {
 		return id;
