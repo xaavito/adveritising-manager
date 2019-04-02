@@ -1,10 +1,14 @@
 package com.proyect.advertisingManager.service;
 
+import java.util.List;
+
+import com.proyect.advertisingManager.entity.Anuncio;
+
 /**
- * Servicio interfaz de mutant service
+ * Servicio interfaz de advertising manager
+ * 
  * @author Javier Gonzalez
- *
  */
 public interface IAdvertisingManagerService {
-	public boolean isMutant(String[] dna);
+	public List<Anuncio> getRandomAnuncios(List<Anuncio> anunciosFromDB);
 }

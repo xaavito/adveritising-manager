@@ -26,6 +26,7 @@ public class Anuncio {
 	private String pais;
 	private int edad;
 	private String genero;
+	private int numeroImpresiones;
 	
 	// for deserialisation
 	public Anuncio() {
@@ -101,5 +102,13 @@ public class Anuncio {
 
 	public void setGenero(String genero) {
 		this.genero = genero;
+	}
+
+	public int getNumeroImpresiones() {
+		return numeroImpresiones;
+	}
+
+	public void setNumeroImpresiones(int numeroImpresiones) {
+		this.numeroImpresiones = numeroImpresiones;
 	}
 }

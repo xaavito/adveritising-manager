@@ -1,7 +1,9 @@
 package com.proyect.advertisingManager.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.proyect.advertisingManager.dao.AdManagerRepository;
 import com.proyect.advertisingManager.entity.Anuncio;
+import com.proyect.advertisingManager.entity.Usuario;
 import com.proyect.advertisingManager.service.IAdvertisingManagerService;
 
 /**
- * 1 de los 2 controllers de entradas. Solo para el chequeo de si es mutante o
- * no.
+ * Controlle general de los API endpoints de la app.
  * 
  * @author Javier Gonzalez
  *
@@ -50,7 +52,7 @@ public class AdManagerController {
 	}
 
 	/**
-	 * Metodo de entrada para el chequeo de un ADN es mutante o humano
+	 * Metodo de entrada para el agregado de anuncios
 	 * 
 	 * @param newAnuncio
 	 * @return
@@ -74,13 +76,40 @@ public class AdManagerController {
 	 * @return
 	 */
 	@GetMapping("/get-anuncios/{id}")
-	ResponseEntity getAnuncios(@PathVariable String id) {
+	ResponseEntity<List<JSONObject>> getAnuncios(@PathVariable String id) {
 		logger.info("Get anuncios");
+		List<Anuncio> anunciosFromDB = null;
+		List<Anuncio> randomAnuncios = null;
 		try {
-			return new ResponseEntity<>(
-				      "Your ID is " + id, 
+			Usuario user = repository.findUsuarioById(id);
+
+			// Si hay usuario segmentamos, sino, nada.
+			if (user != null) {
+				anunciosFromDB = repository.findBySegmentacion(user.getPais(), user.getEdad(), user.getGenero());
+			}
+			else {
+				anunciosFromDB = repository.findAll();
+			}
+			
+			// Aca obtenemos los 3 anuncios con su logica.
+			randomAnuncios = service.getRandomAnuncios(anunciosFromDB);
+			
+			// Aca marcamos los anuncios como impresos.
+			for (Anuncio anuncio : randomAnuncios) {
+				anuncio.setNumeroImpresiones(anuncio.getNumeroImpresiones() + 1);
+				repository.save(anuncio);
+			}
+			// To JSON 
+			List<JSONObject> entities = new ArrayList<JSONObject>();
+		    for (Anuncio n : randomAnuncios) {
+		        JSONObject entity = new JSONObject();
+		        entity.put("titulo", n.getTitulo());
+		        entity.put("descripcion", n.getDescripcion());
+		        entities.add(entity);
+		    }
+			return new ResponseEntity<List<JSONObject>>	(
+					  entities, 
 				      HttpStatus.OK);
-			//return ResponseEntity.status(HttpStatus.OK).build();	
 		} catch (Exception e) {
 			logger.info("Something Went wrooong getting anuncios");
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
