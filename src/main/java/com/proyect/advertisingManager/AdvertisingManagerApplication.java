@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
- * Punto de entrada y ejecucion de la aplicacion que chequea mutantes
+ * Punto de entrada y ejecucion de la aplicacion Adervtisign Manager
  * 
  * @author Javier Gonzalez
  *

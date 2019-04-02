@@ -17,6 +17,7 @@ de lo que estaba dando vueltas, el resultado a continuacion.
 - jUnit: Testing
 - Lombok: Ahorro de lineas de configuracion con un par de anotations
 - Maven: Librerias
+- Swagger: Documentador de API endpoints.
 
 
 # La app se hoestea en [Heroku](https://www.heroku.com/)
@@ -52,3 +53,8 @@ que despierte.
 Conexion con Travis que ejecuta los tests y se puede ver en el Badge, Ademas adjutno esta captura de pantalla.
 
 ![testing](./tests/tests.png)
+
+
+# Swagger
+
+!http://localhost:8080/swagger-ui.html#/

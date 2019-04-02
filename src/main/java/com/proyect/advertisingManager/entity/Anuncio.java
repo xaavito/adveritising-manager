@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Data;
 
 /**
- * Representacion de BD y entidad del adn que se chequea e inserta en la BD
+ * Representacion de BD y entidad del Anuncio generado para insertar y obtener
  * 
  * @author Javier Gonzalez
  *

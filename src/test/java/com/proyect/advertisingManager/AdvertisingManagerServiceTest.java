@@ -12,7 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import com.proyect.advertisingManager.dao.AdnRepository;
+import com.proyect.advertisingManager.dao.AdManagerRepository;
 import com.proyect.advertisingManager.entity.Adn;
 import com.proyect.advertisingManager.entity.Stats;
 
@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 public class AdvertisingManagerServiceTest {
 	
 	@Autowired
-	private AdnRepository repositoryAdn;
+	private AdManagerRepository repositoryAdn;
 	
 	@Autowired
 	private WebTestClient webClient;

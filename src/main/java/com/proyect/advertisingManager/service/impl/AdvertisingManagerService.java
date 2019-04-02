@@ -10,7 +10,7 @@ import com.proyect.advertisingManager.excepction.NotValidDNASequenceException;
 import com.proyect.advertisingManager.service.IAdvertisingManagerService;
 
 /**
- * Servicio general que tiene todo el manejo de chequeo de ADN mutante o humano
+ * Servicio general que tiene todo el manejo para la obtencion de anuncios
  * 
  * @author Javier Gonzalez
  *
