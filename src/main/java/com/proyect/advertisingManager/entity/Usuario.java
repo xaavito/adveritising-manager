@@ -91,4 +91,7 @@ public class Usuario implements Serializable {
 		this.email = email;
 	}
 
+	public String toPrettyString() {
+		return nombre + " " + pais + " " + genero + " " + genero;
+	}
 }

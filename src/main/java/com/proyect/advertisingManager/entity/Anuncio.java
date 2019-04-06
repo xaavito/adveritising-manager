@@ -28,7 +28,8 @@ public class Anuncio implements Serializable {
 
 	private Double costoImpresion;
 	private Double costoTotalMaximo;
-	private Date fechaFinalizacion;
+	private String fechaFinalizacion;
+	private Date fechaFinalizacionDate;
 	private String titulo;
 	private String descripcion;
 	private String pais;
@@ -44,12 +45,11 @@ public class Anuncio implements Serializable {
 			int edad, String genero) {
 		this.costoImpresion = costoImpr;
 		this.costoTotalMaximo = costoTotal;
-
+		this.setFechaFinalizacion(fechaFin);
 		try {
-			this.fechaFinalizacion = new SimpleDateFormat("dd/MM/yyyy").parse(fechaFin);
+			this.fechaFinalizacionDate = new SimpleDateFormat("dd/MM/yyyy").parse(fechaFin);
 		} catch (ParseException e) {
-			e.printStackTrace();
-			this.fechaFinalizacion = new Date();
+			this.fechaFinalizacionDate = new Date();
 		}
 		this.titulo = titulo;
 		this.descripcion = desc;
@@ -83,12 +83,12 @@ public class Anuncio implements Serializable {
 		this.costoTotalMaximo = costoTotalMaximo;
 	}
 
-	public Date getFechaFinalizacion() {
-		return fechaFinalizacion;
+	public Date getFechaFinalizacionDate() {
+		return fechaFinalizacionDate;
 	}
 
-	public void setFechaFinalizacion(Date fechaFinalizacion) {
-		this.fechaFinalizacion = fechaFinalizacion;
+	public void setFechaFinalizacionDate(Date fechaFinalizacion) {
+		this.fechaFinalizacionDate = fechaFinalizacion;
 	}
 
 	public String getTitulo() {
@@ -140,6 +140,14 @@ public class Anuncio implements Serializable {
 	}
 
 	public String toPrettyString() {
-		return titulo + " " + descripcion + " " + fechaFinalizacion + " " + costoImpresion + " " + costoTotalMaximo;
+		return titulo + " " + descripcion + " " + getFechaFinalizacion() + " " + costoImpresion + " " + costoTotalMaximo;
+	}
+
+	public String getFechaFinalizacion() {
+		return fechaFinalizacion;
+	}
+
+	public void setFechaFinalizacion(String fechaFinalizacion) {
+		this.fechaFinalizacion = fechaFinalizacion;
 	}
 }

@@ -1,9 +1,7 @@
 package com.proyect.advertisingManager.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,20 +53,57 @@ public class AdManagerController {
 	}
 
 	/**
+	 * Metodo Helper para insertar usuario
+	 * 
+	 * @param newAnuncio
+	 * @return
+	 */
+	@PostMapping("/add-usuario")
+	ResponseEntity<Object> addUser(@RequestBody Usuario usuario) {
+		logger.info("Adding new User");
+		try {
+			userRepository.save(usuario);
+			return new ResponseEntity<Object>("Usuario Added Correctly", HttpStatus.OK);
+		} catch (Exception e) {
+			logger.info("NO OK Something Went wrooong adding user " + e.getMessage());
+			return new ResponseEntity<Object>("Error agregando Usuarios", HttpStatus.SERVICE_UNAVAILABLE);
+		}
+	}
+
+	/**
+	 * Metodo helper para obtener usuarios
+	 * 
+	 * @return
+	 */
+	@GetMapping("/get-usuarios")
+	ResponseEntity<Object> getUsuarios() {
+		logger.info("Get anuncios sin ID");
+		List<Usuario> allUsers = null;
+		try {
+			allUsers = userRepository.findAll();
+
+			return new ResponseEntity<Object>(allUsers, HttpStatus.OK);
+		} catch (Exception e) {
+			logger.info("Something Went wrooong getting anuncios " + e.getStackTrace());
+			return new ResponseEntity<Object>("Error Obteniendo Usuarios", HttpStatus.SERVICE_UNAVAILABLE);
+		}
+	}
+
+	/**
 	 * Metodo de entrada para el agregado de anuncios
 	 * 
 	 * @param newAnuncio
 	 * @return
 	 */
 	@PostMapping("/add-anuncio")
-	ResponseEntity addAnuncio(@RequestBody Anuncio newAnuncio) {
+	ResponseEntity<Object> addAnuncio(@RequestBody Anuncio newAnuncio) {
 		logger.info("Adding new anuncio");
 		try {
 			repository.save(newAnuncio);
-			return ResponseEntity.status(HttpStatus.OK).build();
+			return new ResponseEntity<Object>("Anuncio Added Correctly", HttpStatus.OK);
 		} catch (Exception e) {
-			logger.info("NO OK Something Went wrooong");
-			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+			logger.info("NO OK Something Went wrooong adding anuncio" + e.getMessage());
+			return new ResponseEntity<Object>("Error agregando anuncio", HttpStatus.SERVICE_UNAVAILABLE);
 		}
 	}
 
@@ -79,35 +114,38 @@ public class AdManagerController {
 	 * @return
 	 */
 	@GetMapping("/get-anuncios/{id}")
-	ResponseEntity<List<Anuncio>> getAnuncios(@PathVariable String id) {
+	ResponseEntity<Object> getAnuncios(@PathVariable String id) {
 		logger.info("Get anuncios usuario logueado");
 		List<Anuncio> anunciosFromDB = null;
 		List<Anuncio> randomAnuncios = null;
 		try {
 			Usuario user = userRepository.findById(id);
 
-			anunciosFromDB = repository.findBySegmentacion(user.getPais(), user.getEdad(), user.getGenero());
+			if (user != null) {
+				logger.info("Usuario en encontrado " + user.toPrettyString());
+				anunciosFromDB = repository.findBySegmentacion(user.getPais(), user.getEdad(), user.getGenero());
 
-			// Aca obtenemos los 3 anuncios con su logica.
-			randomAnuncios = service.getRandomAnuncios(anunciosFromDB);
+				if (anunciosFromDB != null) {
+					logger.info("anuncios encontrados para la segmentacion " + anunciosFromDB.size());
+					// Aca obtenemos los 3 anuncios con su logica.
+					randomAnuncios = service.getRandomAnuncios(anunciosFromDB);
 
-			// Aca marcamos los anuncios como impresos.
-			for (Anuncio anuncio : randomAnuncios) {
-				anuncio.setNumeroImpresiones(anuncio.getNumeroImpresiones() + 1);
-				repository.save(anuncio);
+					// Aca marcamos los anuncios como impresos.
+					for (Anuncio anuncio : randomAnuncios) {
+						anuncio.setNumeroImpresiones(anuncio.getNumeroImpresiones() + 1);
+						repository.save(anuncio);
+					}
+					return new ResponseEntity<Object>(randomAnuncios, HttpStatus.OK);
+				} else {
+					return new ResponseEntity<Object>("No hay anuncios para ese segmentacion",
+							HttpStatus.SERVICE_UNAVAILABLE);
+				}
+			} else {
+				return new ResponseEntity<Object>("No hay usuario con ese id", HttpStatus.SERVICE_UNAVAILABLE);
 			}
-			// To JSON
-			List<JSONObject> entities = new ArrayList<JSONObject>();
-			for (Anuncio n : randomAnuncios) {
-				JSONObject entity = new JSONObject();
-				entity.put("titulo", n.getTitulo());
-				entity.put("descripcion", n.getDescripcion());
-				entities.add(entity);
-			}
-			return new ResponseEntity<List<Anuncio>>(randomAnuncios, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.info("Something Went wrooong getting anuncios");
-			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+			return new ResponseEntity<Object>("Error Obteniendo anuncios by user id", HttpStatus.SERVICE_UNAVAILABLE);
 		}
 	}
 
@@ -117,7 +155,7 @@ public class AdManagerController {
 	 * @return
 	 */
 	@GetMapping("/get-anuncios")
-	ResponseEntity<List<Anuncio>> getAnuncios() {
+	ResponseEntity<Object> getAnuncios() {
 		logger.info("Get anuncios sin ID");
 		List<Anuncio> anunciosFromDB = null;
 		List<Anuncio> randomAnuncios = null;
@@ -127,7 +165,7 @@ public class AdManagerController {
 			for (Anuncio anuncio : anunciosFromDB) {
 				logger.info(anuncio.toPrettyString());
 			}
-			
+
 			if (anunciosFromDB != null) {
 				// Aca obtenemos los 3 anuncios con su logica.
 				randomAnuncios = service.getRandomAnuncios(anunciosFromDB);
@@ -137,20 +175,13 @@ public class AdManagerController {
 					anuncio.setNumeroImpresiones(anuncio.getNumeroImpresiones() + 1);
 					repository.save(anuncio);
 				}
-				// To JSON
-				List<JSONObject> entities = new ArrayList<JSONObject>();
-				for (Anuncio n : randomAnuncios) {
-					JSONObject entity = new JSONObject();
-					entity.put("titulo", n.getTitulo());
-					entity.put("descripcion", n.getDescripcion());
-					entities.add(entity);
-				}
-				return new ResponseEntity<List<Anuncio>>(randomAnuncios, HttpStatus.OK);
+
+				return new ResponseEntity<Object>(randomAnuncios, HttpStatus.OK);
 			}
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+			return new ResponseEntity<Object>("No hay Anuncios a mostrar", HttpStatus.FORBIDDEN);
 		} catch (Exception e) {
-			logger.info("Something Went wrooong getting anuncios " + e.getMessage());
-			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+			logger.info("Something Went wrooong getting anuncios " + e.getStackTrace());
+			return new ResponseEntity<Object>("Error Obteniendo anuncios", HttpStatus.SERVICE_UNAVAILABLE);
 		}
 	}
 }

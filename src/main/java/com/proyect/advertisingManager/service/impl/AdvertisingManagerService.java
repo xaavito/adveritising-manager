@@ -3,8 +3,6 @@ package com.proyect.advertisingManager.service.impl;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -44,9 +42,10 @@ public class AdvertisingManagerService implements IAdvertisingManagerService {
 		int cantidadDeImpresionesRestantes = 0;
 		boolean logicaDeFechasImpresion = false;
 		boolean impresionNoVencida = false;
+		String[] fechaArray;
 
 		LocalDate dateToday = LocalDate.now();
-		LocalDate dateFinImpresion;
+		LocalDate dateFinImpresion = null;
 
 		// Establecemos un limite de ratio de impresion dias para tratar que no se agote
 		// antes de tiempo.
@@ -56,28 +55,42 @@ public class AdvertisingManagerService implements IAdvertisingManagerService {
 		while (resultingAnuncios.size() < 3) {
 			randomAnuncio = getRandomAnuncio(totalWeight, anunciosFromDB);
 
-			Date fechaFinalizacion = randomAnuncio.getFechaFinalizacion();
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(fechaFinalizacion);
-			int year = cal.get(Calendar.YEAR);
-			int month = cal.get(Calendar.MONTH) + 1;
-			int day = cal.get(Calendar.DAY_OF_MONTH);
+			logger.info("randomAnuncio " + randomAnuncio.toPrettyString());
 
-			dateFinImpresion = LocalDate.of(year, month, day);
+			String fechaFinalizacion = randomAnuncio.getFechaFinalizacion();
+			
+			logger.info("fechaFinalizacion " + fechaFinalizacion);
+			try {
+				fechaArray = fechaFinalizacion.split("/");
+				int year = Integer.valueOf(fechaArray[2]);
+				int month = Integer.valueOf(fechaArray[1]);
+				int day = Integer.valueOf(fechaArray[0]);
+
+				dateFinImpresion = LocalDate.of(year, month, day);
+				
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+			
+			logger.info("dateFinImpresion " + dateFinImpresion);
 
 			// Dias restantes para que la publicacion no se deba imprimir mas.
 			long daysBetween = ChronoUnit.DAYS.between(dateToday, dateFinImpresion);
+
+			logger.info("daysBetween " + daysBetween);
 
 			// Aca calculamos si nos pasamos del presupuesto, si nos pasamos no se imprime
 			// mas
 			presupuestoImpresionNoAlcanzado = ((randomAnuncio.getNumeroImpresiones() + 1)
 					* randomAnuncio.getCostoImpresion()) < randomAnuncio.getCostoTotalMaximo();
 
+			logger.info("presupuestoImpresionNoAlcanzado " + presupuestoImpresionNoAlcanzado);
 			// Aca trataremos de no quedarnos sin impresiones antes de la fecha
 			cantidadDeImpresionesRestantes = (int) (randomAnuncio.getCostoTotalMaximo()
 					/ (((randomAnuncio.getNumeroImpresiones() == 0 ? 1 : randomAnuncio.getNumeroImpresiones()))
 							* randomAnuncio.getCostoImpresion()));
 
+			logger.info("cantidadDeImpresionesRestantes " + cantidadDeImpresionesRestantes);
 			// La idea aca es que vayan de la mano la cantidad de impresiones restantes con
 			// los dias que quedan.
 
@@ -86,11 +99,11 @@ public class AdvertisingManagerService implements IAdvertisingManagerService {
 			} else {
 				if (thresholdImpresion > (cantidadDeImpresionesRestantes / daysBetween)) {
 					logicaDeFechasImpresion = true;
-				}
-				else {
+				} else {
 					logicaDeFechasImpresion = false;
 				}
 			}
+			logger.info("logicaDeFechasImpresion " + logicaDeFechasImpresion);
 
 			// La impresion no debe estar vencida
 			impresionNoVencida = daysBetween >= 0;
