@@ -65,13 +65,13 @@ public class AdManagerController {
 		logger.info("Adding new anuncio");
 		try {
 			repository.save(newAnuncio);
-			return ResponseEntity.status(HttpStatus.OK).build();	
+			return ResponseEntity.status(HttpStatus.OK).build();
 		} catch (Exception e) {
 			logger.info("NO OK Something Went wrooong");
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 		}
 	}
-	
+
 	/**
 	 * Metodo para obtener anuncios ya sea con o sin segmentacion
 	 * 
@@ -79,42 +79,77 @@ public class AdManagerController {
 	 * @return
 	 */
 	@GetMapping("/get-anuncios/{id}")
-	ResponseEntity<List<JSONObject>> getAnuncios(@PathVariable String id) {
-		logger.info("Get anuncios");
+	ResponseEntity<List<Anuncio>> getAnuncios(@PathVariable String id) {
+		logger.info("Get anuncios usuario logueado");
 		List<Anuncio> anunciosFromDB = null;
 		List<Anuncio> randomAnuncios = null;
 		try {
 			Usuario user = userRepository.findById(id);
 
-			// Si hay usuario segmentamos, sino, nada.
-			if (user != null) {
-				anunciosFromDB = repository.findBySegmentacion(user.getPais(), user.getEdad(), user.getGenero());
-			}
-			else {
-				anunciosFromDB = repository.findAll();
-			}
-			
+			anunciosFromDB = repository.findBySegmentacion(user.getPais(), user.getEdad(), user.getGenero());
+
 			// Aca obtenemos los 3 anuncios con su logica.
 			randomAnuncios = service.getRandomAnuncios(anunciosFromDB);
-			
+
 			// Aca marcamos los anuncios como impresos.
 			for (Anuncio anuncio : randomAnuncios) {
 				anuncio.setNumeroImpresiones(anuncio.getNumeroImpresiones() + 1);
 				repository.save(anuncio);
 			}
-			// To JSON 
+			// To JSON
 			List<JSONObject> entities = new ArrayList<JSONObject>();
-		    for (Anuncio n : randomAnuncios) {
-		        JSONObject entity = new JSONObject();
-		        entity.put("titulo", n.getTitulo());
-		        entity.put("descripcion", n.getDescripcion());
-		        entities.add(entity);
-		    }
-			return new ResponseEntity<List<JSONObject>>	(
-					  entities, 
-				      HttpStatus.OK);
+			for (Anuncio n : randomAnuncios) {
+				JSONObject entity = new JSONObject();
+				entity.put("titulo", n.getTitulo());
+				entity.put("descripcion", n.getDescripcion());
+				entities.add(entity);
+			}
+			return new ResponseEntity<List<Anuncio>>(randomAnuncios, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.info("Something Went wrooong getting anuncios");
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+		}
+	}
+
+	/**
+	 * Metodo para obtener anuncios sin segmentacion
+	 * 
+	 * @return
+	 */
+	@GetMapping("/get-anuncios")
+	ResponseEntity<List<Anuncio>> getAnuncios() {
+		logger.info("Get anuncios sin ID");
+		List<Anuncio> anunciosFromDB = null;
+		List<Anuncio> randomAnuncios = null;
+		try {
+			anunciosFromDB = repository.findAll();
+
+			for (Anuncio anuncio : anunciosFromDB) {
+				logger.info(anuncio.toPrettyString());
+			}
+			
+			if (anunciosFromDB != null) {
+				// Aca obtenemos los 3 anuncios con su logica.
+				randomAnuncios = service.getRandomAnuncios(anunciosFromDB);
+
+				// Aca marcamos los anuncios como impresos.
+				for (Anuncio anuncio : randomAnuncios) {
+					anuncio.setNumeroImpresiones(anuncio.getNumeroImpresiones() + 1);
+					repository.save(anuncio);
+				}
+				// To JSON
+				List<JSONObject> entities = new ArrayList<JSONObject>();
+				for (Anuncio n : randomAnuncios) {
+					JSONObject entity = new JSONObject();
+					entity.put("titulo", n.getTitulo());
+					entity.put("descripcion", n.getDescripcion());
+					entities.add(entity);
+				}
+				return new ResponseEntity<List<Anuncio>>(randomAnuncios, HttpStatus.OK);
+			}
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		} catch (Exception e) {
+			logger.info("Something Went wrooong getting anuncios " + e.getMessage());
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 		}
 	}

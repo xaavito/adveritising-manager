@@ -1,5 +1,6 @@
 package com.proyect.advertisingManager.entity;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,9 +18,14 @@ import lombok.Data;
  */
 @Document(collection = "anuncio")
 @Data
-public class Anuncio {
+public class Anuncio implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2423644965058210269L;
+
 	private @Id String id;
-	
+
 	private Double costoImpresion;
 	private Double costoTotalMaximo;
 	private Date fechaFinalizacion;
@@ -29,15 +35,16 @@ public class Anuncio {
 	private int edad;
 	private String genero;
 	private int numeroImpresiones;
-	
+
 	// for deserialisation
 	public Anuncio() {
 	}
-	
-	public Anuncio(String titulo, String desc, Double costoImpr, Double costoTotal, String fechaFin, String pais, int edad, String genero) {
+
+	public Anuncio(String titulo, String desc, Double costoImpr, Double costoTotal, String fechaFin, String pais,
+			int edad, String genero) {
 		this.costoImpresion = costoImpr;
 		this.costoTotalMaximo = costoTotal;
-		
+
 		try {
 			this.fechaFinalizacion = new SimpleDateFormat("dd/MM/yyyy").parse(fechaFin);
 		} catch (ParseException e) {
@@ -50,7 +57,7 @@ public class Anuncio {
 		this.edad = edad;
 		this.genero = genero;
 		this.numeroImpresiones = 0;
-	}	
+	}
 
 	public String getId() {
 		return id;
@@ -130,5 +137,9 @@ public class Anuncio {
 
 	public void setNumeroImpresiones(int numeroImpresiones) {
 		this.numeroImpresiones = numeroImpresiones;
+	}
+
+	public String toPrettyString() {
+		return titulo + " " + descripcion + " " + fechaFinalizacion + " " + costoImpresion + " " + costoTotalMaximo;
 	}
 }

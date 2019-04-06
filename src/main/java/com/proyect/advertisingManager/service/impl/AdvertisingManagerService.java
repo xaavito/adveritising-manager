@@ -3,6 +3,8 @@ package com.proyect.advertisingManager.service.impl;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -32,48 +34,81 @@ public class AdvertisingManagerService implements IAdvertisingManagerService {
 		List<Anuncio> resultingAnuncios = new ArrayList<Anuncio>();
 		// Compute the total weight of all items together
 		double totalWeight = 0.0d;
-		for (Anuncio i : anunciosFromDB)
-		{
-		    totalWeight += i.getCostoImpresion();
+		for (Anuncio i : anunciosFromDB) {
+			totalWeight += i.getCostoImpresion();
 		}
+
+		logger.info("totalweight " + totalWeight);
 		Anuncio randomAnuncio = null;
 		boolean presupuestoImpresionNoAlcanzado = false;
 		int cantidadDeImpresionesRestantes = 0;
 		boolean logicaDeFechasImpresion = false;
 		boolean impresionNoVencida = false;
-		
+
 		LocalDate dateToday = LocalDate.now();
 		LocalDate dateFinImpresion;
-		
+
+		// Establecemos un limite de ratio de impresion dias para tratar que no se agote
+		// antes de tiempo.
+		double thresholdImpresion = 0.25;
+
 		// Mientras sea menor a 3 sigo agregando
 		while (resultingAnuncios.size() < 3) {
 			randomAnuncio = getRandomAnuncio(totalWeight, anunciosFromDB);
-			
-			dateFinImpresion = LocalDate.of(randomAnuncio.getFechaFinalizacion().getYear(), randomAnuncio.getFechaFinalizacion().getMonth(), randomAnuncio.getFechaFinalizacion().getDay()	) ;
+
+			Date fechaFinalizacion = randomAnuncio.getFechaFinalizacion();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(fechaFinalizacion);
+			int year = cal.get(Calendar.YEAR);
+			int month = cal.get(Calendar.MONTH) + 1;
+			int day = cal.get(Calendar.DAY_OF_MONTH);
+
+			dateFinImpresion = LocalDate.of(year, month, day);
 
 			// Dias restantes para que la publicacion no se deba imprimir mas.
 			long daysBetween = ChronoUnit.DAYS.between(dateToday, dateFinImpresion);
-			
-			//Aca calculamos si nos pasamos del presupuesto, si nos pasamos no se imprime mas
-			presupuestoImpresionNoAlcanzado = ((randomAnuncio.getNumeroImpresiones() + 1) * randomAnuncio.getCostoImpresion()) < randomAnuncio.getCostoTotalMaximo();
-			
-			//Aca trataremos de no quedarnos sin impresiones antes de la fecha
-			cantidadDeImpresionesRestantes = (int) (((randomAnuncio.getNumeroImpresiones()) * randomAnuncio.getCostoImpresion())/randomAnuncio.getCostoTotalMaximo());
-			
-			// La idea aca es que vayan de la mano la cantidad de impresiones restantes con los dias que quedan.
-			logicaDeFechasImpresion = cantidadDeImpresionesRestantes > daysBetween;
-			
+
+			// Aca calculamos si nos pasamos del presupuesto, si nos pasamos no se imprime
+			// mas
+			presupuestoImpresionNoAlcanzado = ((randomAnuncio.getNumeroImpresiones() + 1)
+					* randomAnuncio.getCostoImpresion()) < randomAnuncio.getCostoTotalMaximo();
+
+			// Aca trataremos de no quedarnos sin impresiones antes de la fecha
+			cantidadDeImpresionesRestantes = (int) (randomAnuncio.getCostoTotalMaximo()
+					/ (((randomAnuncio.getNumeroImpresiones() == 0 ? 1 : randomAnuncio.getNumeroImpresiones()))
+							* randomAnuncio.getCostoImpresion()));
+
+			// La idea aca es que vayan de la mano la cantidad de impresiones restantes con
+			// los dias que quedan.
+
+			if (cantidadDeImpresionesRestantes >= daysBetween) {
+				logicaDeFechasImpresion = true;
+			} else {
+				if (thresholdImpresion > (cantidadDeImpresionesRestantes / daysBetween)) {
+					logicaDeFechasImpresion = true;
+				}
+				else {
+					logicaDeFechasImpresion = false;
+				}
+			}
+
+			// La impresion no debe estar vencida
 			impresionNoVencida = daysBetween >= 0;
-			// Solo agrego si ya no esta, hay que pensar que quizas el random traiga el mismo mas de una vez
-			// Se le agrega la logica que no este vencido.
-			if (!resultingAnuncios.contains(randomAnuncio) && 
-					presupuestoImpresionNoAlcanzado && 
-					logicaDeFechasImpresion && 
-					impresionNoVencida) {
+
+			// Solo agrego si ya no esta, hay que pensar que quizas el random traiga el
+			// mismo mas de una vez
+			logger.info("Anuncion a ser evaluado " + randomAnuncio.toPrettyString());
+			logger.info("logicaDeFechasImpresion " + logicaDeFechasImpresion);
+			logger.info("cantidadDeImpresionesRestantes " + cantidadDeImpresionesRestantes);
+			logger.info("logicaDeFechasImpresion " + logicaDeFechasImpresion);
+			logger.info("daysBetween " + daysBetween);
+			logger.info("impresionNoVencida " + impresionNoVencida);
+			if (!resultingAnuncios.contains(randomAnuncio) && presupuestoImpresionNoAlcanzado && logicaDeFechasImpresion
+					&& impresionNoVencida) {
 				resultingAnuncios.add(randomAnuncio);
 			}
 		}
-			
+
 		return resultingAnuncios;
 	}
 
@@ -89,10 +124,9 @@ public class AdvertisingManagerService implements IAdvertisingManagerService {
 		double random = Math.random() * totalWeight;
 		for (Anuncio anuncio : anunciosFromDB) {
 			random -= anuncio.getCostoImpresion();
-		    if (random <= 0.0d)
-		    {
-		    	return anuncio;
-		    }
+			if (random <= 0.0d) {
+				return anuncio;
+			}
 		}
 		return null;
 	}

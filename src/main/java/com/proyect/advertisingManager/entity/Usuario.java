@@ -1,28 +1,36 @@
 package com.proyect.advertisingManager.entity;
 
+import java.io.Serializable;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
 /**
- * Representacion de BD y entidad del usuario que puede o no estar logueado al sistema
+ * Representacion de BD y entidad del usuario que puede o no estar logueado al
+ * sistema
  * 
  * @author Javier Gonzalez
  *
  */
 @Document(collection = "usuario")
 @Data
-public class Usuario {
+public class Usuario implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 530766931418543139L;
+
 	private @Id String id;
-	
+
 	private String nombre;
 	private String apellido;
 	private String email;
 	private String pais;
 	private int edad;
 	private String genero;
-	
+
 	// for deserialisation
 	public Usuario() {
 	}
@@ -82,6 +90,5 @@ public class Usuario {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
-	
+
 }
