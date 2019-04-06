@@ -125,7 +125,7 @@ public class AdManagerController {
 				logger.info("Usuario en encontrado " + user.toPrettyString());
 				anunciosFromDB = repository.findBySegmentacion(user.getPais(), user.getEdad(), user.getGenero());
 
-				if (anunciosFromDB != null) {
+				if (anunciosFromDB != null && anunciosFromDB.size() > 0) {
 					logger.info("anuncios encontrados para la segmentacion " + anunciosFromDB.size());
 					// Aca obtenemos los 3 anuncios con su logica.
 					randomAnuncios = service.getRandomAnuncios(anunciosFromDB);
@@ -166,7 +166,7 @@ public class AdManagerController {
 				logger.info(anuncio.toPrettyString());
 			}
 
-			if (anunciosFromDB != null) {
+			if (anunciosFromDB != null && anunciosFromDB.size() > 0) {
 				// Aca obtenemos los 3 anuncios con su logica.
 				randomAnuncios = service.getRandomAnuncios(anunciosFromDB);
 

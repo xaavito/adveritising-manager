@@ -92,6 +92,6 @@ public class Usuario implements Serializable {
 	}
 
 	public String toPrettyString() {
-		return nombre + " " + pais + " " + genero + " " + genero;
+		return nombre + " " + pais + " " + genero + " " + edad;
 	}
 }

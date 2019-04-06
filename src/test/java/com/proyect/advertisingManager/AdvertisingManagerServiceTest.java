@@ -58,7 +58,6 @@ public class AdvertisingManagerServiceTest {
 				.expectStatus().isOk();
 
 		// ANUNCIO 2
-
 		anuncio = new Anuncio("ANUNCIO 2", "BBBBBBBBBBBBBB", 0.1, 1.0, "23/06/2020", "Argentina", 15, "M");
 
 		this.webClient.post().uri("/add-anuncio").contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -66,13 +65,12 @@ public class AdvertisingManagerServiceTest {
 				.expectStatus().isOk();
 		
 		// ANUNCIO 3
-
-		anuncio = new Anuncio("ANUNCIO 3", "cccccccccccccccccccc", 0.5, 10.0, "23/07/2019", "Brasil", 45, "F");
+		anuncio = new Anuncio("ANUNCIO 3", "cccccccccccccccccccc", 0.5, 10.0, "23/07/2019", "Argentina", 45, "F");
 
 		this.webClient.post().uri("/add-anuncio").contentType(MediaType.APPLICATION_JSON_UTF8)
 				.accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(anuncio), Anuncio.class).exchange()
 				.expectStatus().isOk();
 
-		System.out.println(this.webClient.get().uri("/get-anuncios").exchange().expectBody().toString());
+		System.out.println(this.webClient.get().uri("/get-anuncios").exchange().expectBody(). returnResult().getResponseBody().toString());
 	}
 }

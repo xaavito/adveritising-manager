@@ -36,7 +36,6 @@ public class AdvertisingManagerService implements IAdvertisingManagerService {
 			totalWeight += i.getCostoImpresion();
 		}
 
-		logger.info("totalweight " + totalWeight);
 		Anuncio randomAnuncio = null;
 		boolean presupuestoImpresionNoAlcanzado = false;
 		int cantidadDeImpresionesRestantes = 0;
@@ -55,11 +54,8 @@ public class AdvertisingManagerService implements IAdvertisingManagerService {
 		while (resultingAnuncios.size() < 3) {
 			randomAnuncio = getRandomAnuncio(totalWeight, anunciosFromDB);
 
-			logger.info("randomAnuncio " + randomAnuncio.toPrettyString());
-
 			String fechaFinalizacion = randomAnuncio.getFechaFinalizacion();
-			
-			logger.info("fechaFinalizacion " + fechaFinalizacion);
+
 			try {
 				fechaArray = fechaFinalizacion.split("/");
 				int year = Integer.valueOf(fechaArray[2]);
@@ -67,30 +63,24 @@ public class AdvertisingManagerService implements IAdvertisingManagerService {
 				int day = Integer.valueOf(fechaArray[0]);
 
 				dateFinImpresion = LocalDate.of(year, month, day);
-				
+
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
-			
-			logger.info("dateFinImpresion " + dateFinImpresion);
 
 			// Dias restantes para que la publicacion no se deba imprimir mas.
 			long daysBetween = ChronoUnit.DAYS.between(dateToday, dateFinImpresion);
-
-			logger.info("daysBetween " + daysBetween);
 
 			// Aca calculamos si nos pasamos del presupuesto, si nos pasamos no se imprime
 			// mas
 			presupuestoImpresionNoAlcanzado = ((randomAnuncio.getNumeroImpresiones() + 1)
 					* randomAnuncio.getCostoImpresion()) < randomAnuncio.getCostoTotalMaximo();
 
-			logger.info("presupuestoImpresionNoAlcanzado " + presupuestoImpresionNoAlcanzado);
 			// Aca trataremos de no quedarnos sin impresiones antes de la fecha
 			cantidadDeImpresionesRestantes = (int) (randomAnuncio.getCostoTotalMaximo()
 					/ (((randomAnuncio.getNumeroImpresiones() == 0 ? 1 : randomAnuncio.getNumeroImpresiones()))
 							* randomAnuncio.getCostoImpresion()));
 
-			logger.info("cantidadDeImpresionesRestantes " + cantidadDeImpresionesRestantes);
 			// La idea aca es que vayan de la mano la cantidad de impresiones restantes con
 			// los dias que quedan.
 
@@ -103,19 +93,12 @@ public class AdvertisingManagerService implements IAdvertisingManagerService {
 					logicaDeFechasImpresion = false;
 				}
 			}
-			logger.info("logicaDeFechasImpresion " + logicaDeFechasImpresion);
 
 			// La impresion no debe estar vencida
 			impresionNoVencida = daysBetween >= 0;
 
 			// Solo agrego si ya no esta, hay que pensar que quizas el random traiga el
 			// mismo mas de una vez
-			logger.info("Anuncion a ser evaluado " + randomAnuncio.toPrettyString());
-			logger.info("logicaDeFechasImpresion " + logicaDeFechasImpresion);
-			logger.info("cantidadDeImpresionesRestantes " + cantidadDeImpresionesRestantes);
-			logger.info("logicaDeFechasImpresion " + logicaDeFechasImpresion);
-			logger.info("daysBetween " + daysBetween);
-			logger.info("impresionNoVencida " + impresionNoVencida);
 			if (!resultingAnuncios.contains(randomAnuncio) && presupuestoImpresionNoAlcanzado && logicaDeFechasImpresion
 					&& impresionNoVencida) {
 				resultingAnuncios.add(randomAnuncio);
