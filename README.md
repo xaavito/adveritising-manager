@@ -50,9 +50,11 @@ Conexion con Travis que ejecuta los tests y se puede ver en el Badge, Ademas adj
 
 # Coverage
 
-Covertura de codigo a traves de los tests.
+Cobertura de codigo a traves de los tests.
 
 ![cobertura](./coverage/Coverage.png)
+
+![reporte](./coverage/index.html)
 
 
 # Swagger
