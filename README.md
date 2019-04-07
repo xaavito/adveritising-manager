@@ -54,7 +54,7 @@ Cobertura de codigo a traves de los tests.
 
 ![cobertura](./coverage/Coverage.png)
 
-![reporte](./coverage/Advertising Manager-jacoco-ut/index.html)
+[./coverage/Advertising Manager-jacoco-ut/index.html]
 
 
 # Swagger
