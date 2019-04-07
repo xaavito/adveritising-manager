@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Anuncio.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Advertising Manager</a> &gt; <a href="index.source.html" class="el_package">com.proyect.advertisingManager.entity</a> &gt; <span class="el_source">Anuncio.java</span></div><h1>Anuncio.java</h1><pre class="source lang-java linenums">package com.proyect.advertisingManager.entity;
+
+import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import lombok.Data;
+
+/**
+ * Representacion de BD y entidad del Anuncio generado para insertar y obtener
+ * 
+ * @author Javier Gonzalez
+ *
+ */
+@Document(collection = &quot;anuncio&quot;)
+@Data
+public class Anuncio implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2423644965058210269L;
+
+	private @Id String id;
+
+	private Double costoImpresion;
+	private Double costoTotalMaximo;
+	private String fechaFinalizacion;
+	private Date fechaFinalizacionDate;
+	private String titulo;
+	private String descripcion;
+	private String pais;
+	private int edad;
+	private String genero;
+	private int numeroImpresiones;
+
+	// for deserialisation
+<span class="fc" id="L41">	public Anuncio() {</span>
+<span class="fc" id="L42">	}</span>
+
+<span class="fc" id="L44">	public Anuncio(String titulo, String desc, Double costoImpr, Double costoTotal, String fechaFin, String pais,</span>
+			int edad, String genero) {
+<span class="fc" id="L46">		this.costoImpresion = costoImpr;</span>
+<span class="fc" id="L47">		this.costoTotalMaximo = costoTotal;</span>
+<span class="fc" id="L48">		this.setFechaFinalizacion(fechaFin);</span>
+		try {
+<span class="fc" id="L50">			this.fechaFinalizacionDate = new SimpleDateFormat(&quot;dd/MM/yyyy&quot;).parse(fechaFin);</span>
+<span class="pc" id="L51">		} catch (ParseException e) {</span>
+<span class="nc" id="L52">			this.fechaFinalizacionDate = new Date();</span>
+		}
+<span class="fc" id="L54">		this.titulo = titulo;</span>
+<span class="fc" id="L55">		this.descripcion = desc;</span>
+<span class="fc" id="L56">		this.pais = pais;</span>
+<span class="fc" id="L57">		this.edad = edad;</span>
+<span class="fc" id="L58">		this.genero = genero;</span>
+<span class="fc" id="L59">		this.numeroImpresiones = 0;</span>
+<span class="fc" id="L60">	}</span>
+
+	public String getId() {
+<span class="fc" id="L63">		return id;</span>
+	}
+
+	public void setId(String id) {
+<span class="fc" id="L67">		this.id = id;</span>
+<span class="fc" id="L68">	}</span>
+
+	public Double getCostoImpresion() {
+<span class="fc" id="L71">		return costoImpresion;</span>
+	}
+
+	public void setCostoImpresion(Double costoImpresion) {
+<span class="fc" id="L75">		this.costoImpresion = costoImpresion;</span>
+<span class="fc" id="L76">	}</span>
+
+	public Double getCostoTotalMaximo() {
+<span class="fc" id="L79">		return costoTotalMaximo;</span>
+	}
+
+	public void setCostoTotalMaximo(Double costoTotalMaximo) {
+<span class="fc" id="L83">		this.costoTotalMaximo = costoTotalMaximo;</span>
+<span class="fc" id="L84">	}</span>
+
+	public Date getFechaFinalizacionDate() {
+<span class="fc" id="L87">		return fechaFinalizacionDate;</span>
+	}
+
+	public void setFechaFinalizacionDate(Date fechaFinalizacion) {
+<span class="fc" id="L91">		this.fechaFinalizacionDate = fechaFinalizacion;</span>
+<span class="fc" id="L92">	}</span>
+
+	public String getTitulo() {
+<span class="fc" id="L95">		return titulo;</span>
+	}
+
+	public void setTitulo(String titulo) {
+<span class="fc" id="L99">		this.titulo = titulo;</span>
+<span class="fc" id="L100">	}</span>
+
+	public String getDescripcion() {
+<span class="fc" id="L103">		return descripcion;</span>
+	}
+
+	public void setDescripcion(String descripcion) {
+<span class="fc" id="L107">		this.descripcion = descripcion;</span>
+<span class="fc" id="L108">	}</span>
+
+	public String getPais() {
+<span class="fc" id="L111">		return pais;</span>
+	}
+
+	public void setPais(String pais) {
+<span class="fc" id="L115">		this.pais = pais;</span>
+<span class="fc" id="L116">	}</span>
+
+	public int getEdad() {
+<span class="fc" id="L119">		return edad;</span>
+	}
+
+	public void setEdad(int edad) {
+<span class="fc" id="L123">		this.edad = edad;</span>
+<span class="fc" id="L124">	}</span>
+
+	public String getGenero() {
+<span class="fc" id="L127">		return genero;</span>
+	}
+
+	public void setGenero(String genero) {
+<span class="fc" id="L131">		this.genero = genero;</span>
+<span class="fc" id="L132">	}</span>
+
+	public int getNumeroImpresiones() {
+<span class="fc" id="L135">		return numeroImpresiones;</span>
+	}
+
+	public void setNumeroImpresiones(int numeroImpresiones) {
+<span class="fc" id="L139">		this.numeroImpresiones = numeroImpresiones;</span>
+<span class="fc" id="L140">	}</span>
+
+	public String toPrettyString() {
+<span class="nc" id="L143">		return titulo + &quot; &quot; + descripcion + &quot; &quot; + getFechaFinalizacion() + &quot; &quot; + costoImpresion + &quot; &quot; + costoTotalMaximo;</span>
+	}
+
+	public String getFechaFinalizacion() {
+<span class="fc" id="L147">		return fechaFinalizacion;</span>
+	}
+
+	public void setFechaFinalizacion(String fechaFinalizacion) {
+<span class="fc" id="L151">		this.fechaFinalizacion = fechaFinalizacion;</span>
+<span class="fc" id="L152">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

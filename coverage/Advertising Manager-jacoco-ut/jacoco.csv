@@ -1,0 +1,7 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Advertising Manager,com.proyect.advertisingManager.controller,AdManagerController,78,196,3,15,15,43,3,13,0,7
+Advertising Manager,com.proyect.advertisingManager,AdvertisingManagerApplication,5,3,0,0,2,1,1,1,1,1
+Advertising Manager,com.proyect.advertisingManager.service.impl,AdvertisingManagerService,16,197,9,17,5,45,9,8,0,4
+Advertising Manager,com.proyect.advertisingManager.config,Swagger2Config,0,34,0,0,0,12,0,3,0,3
+Advertising Manager,com.proyect.advertisingManager.entity,Anuncio,34,119,0,0,2,48,1,24,1,24
+Advertising Manager,com.proyect.advertisingManager.entity,Usuario,23,73,0,0,1,31,1,16,1,16

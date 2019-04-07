@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AdManagerController.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Advertising Manager</a> &gt; <a href="index.source.html" class="el_package">com.proyect.advertisingManager.controller</a> &gt; <span class="el_source">AdManagerController.java</span></div><h1>AdManagerController.java</h1><pre class="source lang-java linenums">package com.proyect.advertisingManager.controller;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.proyect.advertisingManager.dao.AdManagerRepository;
+import com.proyect.advertisingManager.dao.UsuarioRepository;
+import com.proyect.advertisingManager.entity.Anuncio;
+import com.proyect.advertisingManager.entity.Usuario;
+import com.proyect.advertisingManager.service.IAdvertisingManagerService;
+
+/**
+ * Controller general de los API endpoints de la app.
+ * 
+ * @author Javier Gonzalez
+ *
+ */
+@RestController
+public class AdManagerController {
+
+<span class="fc" id="L31">	private static final Logger logger = LoggerFactory.getLogger(AdManagerController.class);</span>
+
+	@Autowired
+	private IAdvertisingManagerService service;
+
+	private final AdManagerRepository repository;
+	private final UsuarioRepository userRepository;
+
+<span class="fc" id="L39">	AdManagerController(AdManagerRepository repository, UsuarioRepository userRepository) {</span>
+<span class="fc" id="L40">		this.repository = repository;</span>
+<span class="fc" id="L41">		this.userRepository = userRepository;</span>
+<span class="fc" id="L42">	}</span>
+
+	/**
+	 * Metodo Helper para insertar usuario
+	 * 
+	 * @param usuario
+	 * @return
+	 */
+	@PostMapping(&quot;/add-usuario&quot;)
+	ResponseEntity&lt;Object&gt; addUser(@RequestBody Usuario usuario) {
+<span class="fc" id="L52">		logger.info(&quot;Adding new User&quot;);</span>
+		try {
+<span class="fc" id="L54">			userRepository.save(usuario);</span>
+<span class="fc" id="L55">			return new ResponseEntity&lt;Object&gt;(&quot;Usuario Added Correctly&quot;, HttpStatus.OK);</span>
+<span class="nc" id="L56">		} catch (Exception e) {</span>
+<span class="nc" id="L57">			logger.info(&quot;NO OK Something Went wrooong adding user &quot; + e.getMessage());</span>
+<span class="nc" id="L58">			return new ResponseEntity&lt;Object&gt;(&quot;Error agregando Usuarios&quot;, HttpStatus.SERVICE_UNAVAILABLE);</span>
+		}
+	}
+
+	/**
+	 * Metodo helper para obtener usuarios
+	 * 
+	 * @return
+	 */
+	@GetMapping(&quot;/get-usuarios&quot;)
+	ResponseEntity&lt;Object&gt; getUsers() {
+<span class="fc" id="L69">		logger.info(&quot;Get Usuarios&quot;);</span>
+<span class="fc" id="L70">		List&lt;Usuario&gt; allUsers = null;</span>
+		try {
+<span class="fc" id="L72">			allUsers = userRepository.findAll();</span>
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">			if (allUsers != null &amp;&amp; allUsers.size() &gt; 0) {</span>
+<span class="fc" id="L74">				return new ResponseEntity&lt;Object&gt;(allUsers, HttpStatus.OK);</span>
+			}
+<span class="fc" id="L76">			return new ResponseEntity&lt;Object&gt;(&quot;There are no users&quot;, HttpStatus.SERVICE_UNAVAILABLE);</span>
+<span class="nc" id="L77">		} catch (Exception e) {</span>
+<span class="nc" id="L78">			logger.info(&quot;Something Went wrooong getting anuncios &quot; + e.getMessage());</span>
+<span class="nc" id="L79">			return new ResponseEntity&lt;Object&gt;(&quot;Error Obteniendo Usuarios&quot;, HttpStatus.SERVICE_UNAVAILABLE);</span>
+		}
+	}
+
+	/**
+	 * Metodo de entrada para el agregado de anuncios
+	 * 
+	 * @param newAnuncio
+	 * @return
+	 */
+	@PostMapping(&quot;/add-anuncio&quot;)
+	ResponseEntity&lt;Object&gt; addAnuncio(@RequestBody Anuncio newAnuncio) {
+<span class="fc" id="L91">		logger.info(&quot;Adding new anuncio&quot;);</span>
+		try {
+<span class="fc" id="L93">			repository.save(newAnuncio);</span>
+<span class="fc" id="L94">			return new ResponseEntity&lt;Object&gt;(&quot;Anuncio Added Correctly&quot;, HttpStatus.OK);</span>
+<span class="nc" id="L95">		} catch (Exception e) {</span>
+<span class="nc" id="L96">			logger.info(&quot;NO OK Something Went wrooong adding anuncio&quot; + e.getMessage());</span>
+<span class="nc" id="L97">			return new ResponseEntity&lt;Object&gt;(&quot;Error agregando anuncio&quot;, HttpStatus.SERVICE_UNAVAILABLE);</span>
+		}
+	}
+
+	/**
+	 * Metodo para obtener anuncios con segmentacion
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@GetMapping(&quot;/get-anuncios/{id}&quot;)
+	ResponseEntity&lt;Object&gt; getAnuncios(@PathVariable String id) {
+<span class="fc" id="L109">		logger.info(&quot;Get anuncios usuario logueado&quot;);</span>
+<span class="fc" id="L110">		List&lt;Anuncio&gt; anunciosFromDB = null;</span>
+<span class="fc" id="L111">		List&lt;Anuncio&gt; randomAnuncios = null;</span>
+		try {
+<span class="fc" id="L113">			Usuario user = userRepository.findById(id);</span>
+
+<span class="fc bfc" id="L115" title="All 2 branches covered.">			if (user != null) {</span>
+				// logger.info(&quot;Usuario en encontrado &quot; + user.toPrettyString());
+<span class="fc" id="L117">				anunciosFromDB = repository.findBySegmentacion(user.getPais(), user.getEdad(), user.getGenero());</span>
+
+<span class="pc bpc" id="L119" title="1 of 4 branches missed.">				if (anunciosFromDB != null &amp;&amp; anunciosFromDB.size() &gt; 0) {</span>
+					// logger.info(&quot;anuncios encontrados para la segmentacion &quot; +
+					// anunciosFromDB.size());
+					// Aca obtenemos los 3 anuncios con su logica.
+<span class="fc" id="L123">					randomAnuncios = service.getRandomAnuncios(anunciosFromDB);</span>
+
+					// Aca marcamos los anuncios como impresos.
+<span class="fc bfc" id="L126" title="All 2 branches covered.">					for (Anuncio anuncio : randomAnuncios) {</span>
+<span class="fc" id="L127">						anuncio.setNumeroImpresiones(anuncio.getNumeroImpresiones() + 1);</span>
+<span class="fc" id="L128">						repository.save(anuncio);</span>
+					}
+<span class="fc" id="L130">					return new ResponseEntity&lt;Object&gt;(randomAnuncios, HttpStatus.OK);</span>
+				} else {
+<span class="fc" id="L132">					return new ResponseEntity&lt;Object&gt;(&quot;No hay anuncios para ese segmentacion&quot;,</span>
+<span class="fc" id="L133">							HttpStatus.SERVICE_UNAVAILABLE);</span>
+				}
+			} else {
+<span class="fc" id="L136">				return new ResponseEntity&lt;Object&gt;(&quot;No hay usuario con ese id&quot;, HttpStatus.SERVICE_UNAVAILABLE);</span>
+			}
+<span class="nc" id="L138">		} catch (Exception e) {</span>
+<span class="nc" id="L139">			logger.info(&quot;Something Went wrooong getting anuncios&quot;);</span>
+<span class="nc" id="L140">			return new ResponseEntity&lt;Object&gt;(&quot;Error Obteniendo anuncios by user id&quot;, HttpStatus.SERVICE_UNAVAILABLE);</span>
+		}
+	}
+
+	/**
+	 * Metodo para obtener anuncios sin segmentacion
+	 * 
+	 * @return
+	 */
+	@GetMapping(&quot;/get-anuncios&quot;)
+	ResponseEntity&lt;Object&gt; getAnuncios() {
+<span class="fc" id="L151">		logger.info(&quot;Get anuncios sin ID&quot;);</span>
+<span class="fc" id="L152">		List&lt;Anuncio&gt; anunciosFromDB = null;</span>
+<span class="fc" id="L153">		List&lt;Anuncio&gt; randomAnuncios = null;</span>
+		try {
+<span class="fc" id="L155">			anunciosFromDB = repository.findAll();</span>
+
+			/*
+			 * for (Anuncio anuncio : anunciosFromDB) {
+			 * logger.info(anuncio.toPrettyString()); }
+			 */
+<span class="pc bpc" id="L161" title="1 of 4 branches missed.">			if (anunciosFromDB != null &amp;&amp; anunciosFromDB.size() &gt; 0) {</span>
+				// Aca obtenemos los 3 anuncios con su logica.
+<span class="fc" id="L163">				randomAnuncios = service.getRandomAnuncios(anunciosFromDB);</span>
+
+				// Aca marcamos los anuncios como impresos.
+<span class="fc bfc" id="L166" title="All 2 branches covered.">				for (Anuncio anuncio : randomAnuncios) {</span>
+<span class="fc" id="L167">					anuncio.setNumeroImpresiones(anuncio.getNumeroImpresiones() + 1);</span>
+<span class="fc" id="L168">					repository.save(anuncio);</span>
+				}
+
+<span class="fc" id="L171">				return new ResponseEntity&lt;Object&gt;(randomAnuncios, HttpStatus.OK);</span>
+			}
+<span class="fc" id="L173">			return new ResponseEntity&lt;Object&gt;(&quot;No hay Anuncios a mostrar&quot;, HttpStatus.SERVICE_UNAVAILABLE);</span>
+<span class="nc" id="L174">		} catch (Exception e) {</span>
+<span class="nc" id="L175">			logger.info(&quot;Something Went wrooong getting anuncios &quot; + e.getStackTrace());</span>
+<span class="nc" id="L176">			return new ResponseEntity&lt;Object&gt;(&quot;Error Obteniendo anuncios&quot;, HttpStatus.SERVICE_UNAVAILABLE);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

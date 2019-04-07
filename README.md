@@ -38,7 +38,7 @@ que despierte.
 
 1) Clonar el proyecto de github (https://github.com/xaavito/adveritising-manager)
 
-2) Una vez clonado en un repo propio basta con ir a la carpeta mutantfinder y desde la consola
+2) Una vez clonado en un repo propio basta con ir a la carpeta advertisingManager y desde la consola
 
 					java -jar target/advertisingManager-0.0.1-SNAPSHOT.jar
 

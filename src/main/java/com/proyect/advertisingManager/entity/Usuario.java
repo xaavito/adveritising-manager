@@ -35,6 +35,15 @@ public class Usuario implements Serializable {
 	public Usuario() {
 	}
 
+	public Usuario(String nom, String ape, String email, String pais, int ed, String gen) {
+		this.nombre = nom;
+		this.apellido = ape;
+		this.email = email;
+		this.pais = pais;
+		this.edad = ed;
+		this.genero = gen;
+	}
+
 	public String getId() {
 		return id;
 	}

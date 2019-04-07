@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AdvertisingManagerService.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Advertising Manager</a> &gt; <a href="index.source.html" class="el_package">com.proyect.advertisingManager.service.impl</a> &gt; <span class="el_source">AdvertisingManagerService.java</span></div><h1>AdvertisingManagerService.java</h1><pre class="source lang-java linenums">package com.proyect.advertisingManager.service.impl;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.proyect.advertisingManager.entity.Anuncio;
+import com.proyect.advertisingManager.service.IAdvertisingManagerService;
+
+/**
+ * Servicio general que tiene todo el manejo para la obtencion de anuncios
+ * 
+ * @author Javier Gonzalez
+ *
+ */
+@Service
+<span class="fc" id="L22">public class AdvertisingManagerService implements IAdvertisingManagerService {</span>
+
+<span class="fc" id="L24">	private static final Logger logger = LoggerFactory.getLogger(AdvertisingManagerService.class);</span>
+
+	/**
+	 * Metodo que obtiene los 3 anuncios
+	 */
+	@Override
+	public List&lt;Anuncio&gt; getRandomAnuncios(List&lt;Anuncio&gt; anunciosFromDB) {
+<span class="fc" id="L31">		logger.info(&quot;getRandomAnuncios...&quot;);</span>
+<span class="fc" id="L32">		List&lt;Anuncio&gt; resultingAnuncios = new ArrayList&lt;Anuncio&gt;();</span>
+		// Compute the total weight of all items together
+<span class="fc" id="L34">		double totalWeight = 0.0d;</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">		for (Anuncio i : anunciosFromDB) {</span>
+<span class="fc" id="L36">			totalWeight += i.getCostoImpresion();</span>
+		}
+
+<span class="fc" id="L39">		Anuncio randomAnuncio = null;</span>
+<span class="fc" id="L40">		boolean presupuestoImpresionNoAlcanzado = false;</span>
+<span class="fc" id="L41">		int cantidadDeImpresionesRestantes = 0;</span>
+<span class="fc" id="L42">		boolean logicaDeFechasImpresion = false;</span>
+<span class="fc" id="L43">		boolean impresionNoVencida = false;</span>
+		String[] fechaArray;
+
+<span class="fc" id="L46">		LocalDate dateToday = LocalDate.now();</span>
+<span class="fc" id="L47">		LocalDate dateFinImpresion = null;</span>
+
+		// Establecemos un limite de ratio de impresion dias para tratar que no se agote
+		// antes de tiempo.
+<span class="fc" id="L51">		double thresholdImpresion = 0.25;</span>
+
+		// Mientras sea menor a 3 sigo agregando
+<span class="fc bfc" id="L54" title="All 2 branches covered.">		while (resultingAnuncios.size() &lt; 3) {</span>
+<span class="fc" id="L55">			randomAnuncio = getRandomAnuncio(totalWeight, anunciosFromDB);</span>
+
+<span class="fc" id="L57">			String fechaFinalizacion = randomAnuncio.getFechaFinalizacion();</span>
+
+			try {
+<span class="fc" id="L60">				fechaArray = fechaFinalizacion.split(&quot;/&quot;);</span>
+<span class="fc" id="L61">				int year = Integer.valueOf(fechaArray[2]);</span>
+<span class="fc" id="L62">				int month = Integer.valueOf(fechaArray[1]);</span>
+<span class="fc" id="L63">				int day = Integer.valueOf(fechaArray[0]);</span>
+
+<span class="fc" id="L65">				dateFinImpresion = LocalDate.of(year, month, day);</span>
+
+<span class="pc" id="L67">			} catch (Exception e) {</span>
+<span class="nc" id="L68">				logger.error(e.getMessage());</span>
+			}
+
+			// Dias restantes para que la publicacion no se deba imprimir mas.
+<span class="fc" id="L72">			long daysBetween = ChronoUnit.DAYS.between(dateToday, dateFinImpresion);</span>
+
+			// Aca calculamos si nos pasamos del presupuesto, si nos pasamos no se imprime
+			// mas
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">			presupuestoImpresionNoAlcanzado = ((randomAnuncio.getNumeroImpresiones() + 1)</span>
+<span class="fc" id="L77">					* randomAnuncio.getCostoImpresion()) &lt; randomAnuncio.getCostoTotalMaximo();</span>
+
+			// Aca trataremos de no quedarnos sin impresiones antes de la fecha
+<span class="fc" id="L80">			cantidadDeImpresionesRestantes = (int) (randomAnuncio.getCostoTotalMaximo()</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">					/ (((randomAnuncio.getNumeroImpresiones() == 0 ? 1 : randomAnuncio.getNumeroImpresiones()))</span>
+<span class="fc" id="L82">							* randomAnuncio.getCostoImpresion()));</span>
+
+			// La idea aca es que vayan de la mano la cantidad de impresiones restantes con
+			// los dias que quedan.
+
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">			if (cantidadDeImpresionesRestantes &gt;= daysBetween) {</span>
+<span class="nc" id="L88">				logicaDeFechasImpresion = true;</span>
+<span class="nc" id="L89">			} else {</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">				if (thresholdImpresion &gt; (cantidadDeImpresionesRestantes / daysBetween)) {</span>
+<span class="fc" id="L91">					logicaDeFechasImpresion = true;</span>
+<span class="fc" id="L92">				} else {</span>
+<span class="nc" id="L93">					logicaDeFechasImpresion = false;</span>
+				}
+			}
+
+			// La impresion no debe estar vencida
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">			impresionNoVencida = daysBetween &gt;= 0;</span>
+
+			// Solo agrego si ya no esta, hay que pensar que quizas el random traiga el
+			// mismo mas de una vez
+<span class="pc bpc" id="L102" title="2 of 6 branches missed.">			if (!resultingAnuncios.contains(randomAnuncio) &amp;&amp; presupuestoImpresionNoAlcanzado &amp;&amp; logicaDeFechasImpresion</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">					&amp;&amp; impresionNoVencida) {</span>
+<span class="fc" id="L104">				resultingAnuncios.add(randomAnuncio);</span>
+			}
+		}
+
+<span class="fc" id="L108">		return resultingAnuncios;</span>
+	}
+
+	/**
+	 * Metodo que calcula y obtiene un anuncio basado en su peso.
+	 * 
+	 * @param totalWeight
+	 * @param anunciosFromDB
+	 * @return
+	 */
+	private Anuncio getRandomAnuncio(double totalWeight, List&lt;Anuncio&gt; anunciosFromDB) {
+<span class="fc" id="L119">		logger.info(&quot;getRandomAnuncio...&quot;);</span>
+<span class="fc" id="L120">		double random = Math.random() * totalWeight;</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">		for (Anuncio anuncio : anunciosFromDB) {</span>
+<span class="fc" id="L122">			random -= anuncio.getCostoImpresion();</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">			if (random &lt;= 0.0d) {</span>
+<span class="fc" id="L124">				return anuncio;</span>
+			}
+		}
+<span class="nc" id="L127">		return null;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

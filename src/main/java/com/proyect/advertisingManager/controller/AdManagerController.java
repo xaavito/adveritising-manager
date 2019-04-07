@@ -20,7 +20,7 @@ import com.proyect.advertisingManager.entity.Usuario;
 import com.proyect.advertisingManager.service.IAdvertisingManagerService;
 
 /**
- * Controlle general de los API endpoints de la app.
+ * Controller general de los API endpoints de la app.
  * 
  * @author Javier Gonzalez
  *
@@ -42,20 +42,9 @@ public class AdManagerController {
 	}
 
 	/**
-	 * Metodo solamente de prueba, hay que removerlo
-	 * 
-	 * @return
-	 */
-	@GetMapping("/all")
-	List<Anuncio> all() {
-		logger.info("Getting all calls to service");
-		return repository.findAll();
-	}
-
-	/**
 	 * Metodo Helper para insertar usuario
 	 * 
-	 * @param newAnuncio
+	 * @param usuario
 	 * @return
 	 */
 	@PostMapping("/add-usuario")
@@ -76,15 +65,17 @@ public class AdManagerController {
 	 * @return
 	 */
 	@GetMapping("/get-usuarios")
-	ResponseEntity<Object> getUsuarios() {
-		logger.info("Get anuncios sin ID");
+	ResponseEntity<Object> getUsers() {
+		logger.info("Get Usuarios");
 		List<Usuario> allUsers = null;
 		try {
 			allUsers = userRepository.findAll();
-
-			return new ResponseEntity<Object>(allUsers, HttpStatus.OK);
+			if (allUsers != null && allUsers.size() > 0) {
+				return new ResponseEntity<Object>(allUsers, HttpStatus.OK);
+			}
+			return new ResponseEntity<Object>("There are no users", HttpStatus.SERVICE_UNAVAILABLE);
 		} catch (Exception e) {
-			logger.info("Something Went wrooong getting anuncios " + e.getStackTrace());
+			logger.info("Something Went wrooong getting anuncios " + e.getMessage());
 			return new ResponseEntity<Object>("Error Obteniendo Usuarios", HttpStatus.SERVICE_UNAVAILABLE);
 		}
 	}
@@ -108,7 +99,7 @@ public class AdManagerController {
 	}
 
 	/**
-	 * Metodo para obtener anuncios ya sea con o sin segmentacion
+	 * Metodo para obtener anuncios con segmentacion
 	 * 
 	 * @param id
 	 * @return
@@ -122,11 +113,12 @@ public class AdManagerController {
 			Usuario user = userRepository.findById(id);
 
 			if (user != null) {
-				logger.info("Usuario en encontrado " + user.toPrettyString());
+				// logger.info("Usuario en encontrado " + user.toPrettyString());
 				anunciosFromDB = repository.findBySegmentacion(user.getPais(), user.getEdad(), user.getGenero());
 
 				if (anunciosFromDB != null && anunciosFromDB.size() > 0) {
-					logger.info("anuncios encontrados para la segmentacion " + anunciosFromDB.size());
+					// logger.info("anuncios encontrados para la segmentacion " +
+					// anunciosFromDB.size());
 					// Aca obtenemos los 3 anuncios con su logica.
 					randomAnuncios = service.getRandomAnuncios(anunciosFromDB);
 
@@ -162,10 +154,10 @@ public class AdManagerController {
 		try {
 			anunciosFromDB = repository.findAll();
 
-			for (Anuncio anuncio : anunciosFromDB) {
-				logger.info(anuncio.toPrettyString());
-			}
-
+			/*
+			 * for (Anuncio anuncio : anunciosFromDB) {
+			 * logger.info(anuncio.toPrettyString()); }
+			 */
 			if (anunciosFromDB != null && anunciosFromDB.size() > 0) {
 				// Aca obtenemos los 3 anuncios con su logica.
 				randomAnuncios = service.getRandomAnuncios(anunciosFromDB);
@@ -178,7 +170,7 @@ public class AdManagerController {
 
 				return new ResponseEntity<Object>(randomAnuncios, HttpStatus.OK);
 			}
-			return new ResponseEntity<Object>("No hay Anuncios a mostrar", HttpStatus.FORBIDDEN);
+			return new ResponseEntity<Object>("No hay Anuncios a mostrar", HttpStatus.SERVICE_UNAVAILABLE);
 		} catch (Exception e) {
 			logger.info("Something Went wrooong getting anuncios " + e.getStackTrace());
 			return new ResponseEntity<Object>("Error Obteniendo anuncios", HttpStatus.SERVICE_UNAVAILABLE);
