@@ -18,21 +18,8 @@ de lo que estaba dando vueltas, el resultado a continuacion.
 - Lombok: Ahorro de lineas de configuracion con un par de anotations
 - Maven: Librerias
 - Swagger: Documentador de API endpoints.
+- Jacoco: Cobertura y reportes
 
-
-# La app se hoestea en [Heroku](https://www.heroku.com/)
-
-Intente hostearlo en AWS y Google App Engine, pero me parecio complejo en exceso para el tipo de producto que estaba
-tratando de subir, este hosting es rapido y sin vueltas y sin exigencias de tecnologias o librerias como si tenia google
-y AWS.
-
-# Los Servicios estan accesibles en la nube(*):
-
-- [mutant](https://whispering-inlet-80058.herokuapp.com/mutant)
-- [stats](https://whispering-inlet-80058.herokuapp.com/stats)
-
-(*) Por funcionamiento propio de Heroku quizas la app este dormida, basta con acceder a la API y esperar unos segundos hasta 
-que despierte.
 
 # Instrucciones para lanzar la aplicacion en localhost
 
@@ -44,15 +31,28 @@ que despierte.
 
 3) Acceder via explorador a:
 
-							localhost:8080/stats
+							localhost:8080/add-anuncio
 
-							localhost:8080/mutant
+							localhost:8080/get-anuncios
+							
+							localhost:8080/get-anuncios/{id}
+							
+							localhost:8080/add-usuario
 
+							localhost:8080/get-usuarios
+							
+							
 # Tests
 
 Conexion con Travis que ejecuta los tests y se puede ver en el Badge, Ademas adjutno esta captura de pantalla.
 
-![testing](./tests/tests.png)
+![testing](./tests/Tests.png)
+
+# Coverage
+
+Covertura de codigo a traves de los tests.
+
+![cobertura](./coverage/Coverage.png)
 
 
 # Swagger
