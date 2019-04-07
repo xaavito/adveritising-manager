@@ -59,4 +59,4 @@ El reporte completo se puede encontrar en: [Reporte](https://github.com/xaavito/
 
 # Swagger
 
-!http://localhost:8080/swagger-ui.html#/
+http://localhost:8080/swagger-ui.html#/
