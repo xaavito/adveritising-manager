@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/xaavito/mutantfinder.png?branch=master)](https://travis-ci.org/xaavito/mutantfinder)
+[![codecov](https://codecov.io/gh/TechnionYP5777/project-name/branch/master/graph/badge.svg)](https://codecov.io/gh/TechnionYP5777/project-name)
 
 # ADVERTISING MANAGER 
 By Javier Martin Gonzalez
