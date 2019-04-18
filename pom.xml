@@ -160,6 +160,18 @@
 							<outputDirectory>${project.build.directory}/${project.name}-jacoco-ut</outputDirectory>
 						</configuration>
 					</execution>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
 				</executions>
 				<configuration>
 					<systemPropertyVariables>
